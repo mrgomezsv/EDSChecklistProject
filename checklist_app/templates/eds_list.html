@@ -8,27 +8,118 @@
         body {
             font-family: Arial, sans-serif;
         }
+
+        /* Tabla de EDS */
         table {
             width: 100%;
             border-collapse: collapse;
         }
+
         table, th, td {
-            border: 1px solid black;
+            border: 1px solid #d1d1d1;
         }
+
         th, td {
             padding: 10px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
+        }
+
+        /* Estilo del botón para abrir el modal */
+        .btn-add {
+            background-color: #0078d4;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .btn-add:hover {
+            background-color: #005a9e;
+        }
+
+        /* Estilos del Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 30%;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0078d4;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover, .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Estilos del formulario */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="text"], select {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #d1d1d1;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .btn-submit {
+            background-color: #0078d4;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .btn-submit:hover {
+            background-color: #005a9e;
         }
     </style>
 </head>
 <body>
     <h1>Estaciones de Servicio (EDS)</h1>
 
-    <!-- Buscador -->
-    <input type="text" id="search-box" placeholder="Buscar por nombre o ubicación" onkeyup="filterEDS()">
+    <!-- Botón para abrir el modal -->
+    <button class="btn-add" onclick="openModal()">Agregar Nueva Estación de Servicio</button>
 
     <!-- Tabla de Estaciones de Servicio -->
     <table id="eds-table">
@@ -47,63 +138,41 @@
         </tbody>
     </table>
 
-    <!-- Formulario para Agregar Nueva EDS -->
-    <h2>Agregar Nueva Estación de Servicio</h2>
-    <form id="eds-form">
-        <label for="name">Nombre:</label><br>
-        <input type="text" id="name" name="name" required><br><br>
+    <!-- Modal para agregar EDS -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 class="modal-header">Agregar Nueva Estación de Servicio</h2>
+            <form id="eds-form">
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" name="name" required>
 
-        <label for="location">Ubicación:</label><br>
-        <input type="text" id="location" name="location" required><br><br>
+                <label for="location">Ubicación:</label>
+                <input type="text" id="location" name="location" required>
 
-        <label for="status">Estado:</label><br>
-        <select id="status" name="status">
-            <option value="Pendiente">Pendiente</option>
-            <option value="Completo">Completo</option>
-        </select><br><br>
+                <label for="status">Estado:</label>
+                <select id="status" name="status">
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Completo">Completo</option>
+                </select>
 
-        <button type="button" onclick="addEDS()">Agregar</button>
-    </form>
+                <button type="button" class="btn-submit" onclick="addEDS()">Agregar</button>
+            </form>
+        </div>
+    </div>
 
     <script>
-        // Hacer una solicitud GET a la API para obtener las EDS
-        fetch('/api/eds/')
-            .then(response => response.json())
-            .then(data => {
-                const tableBody = document.querySelector('#eds-table tbody');
-                data.forEach(eds => {
-                    const row = document.createElement('tr');
-                    row.setAttribute('data-id', eds.id);
-                    row.innerHTML = `
-                        <td>${eds.id}</td>
-                        <td>${eds.name}</td>
-                        <td>${eds.location}</td>
-                        <td>${eds.status}</td>
-                        <td><button onclick="editEDS(${eds.id})">Editar</button></td>
-                        <td><button onclick="deleteEDS(${eds.id})">Eliminar</button></td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            })
-            .catch(error => console.error('Error:', error));
-
-        // Filtrar EDS por nombre o ubicación
-        function filterEDS() {
-            const searchQuery = document.getElementById('search-box').value.toLowerCase();
-            const rows = document.querySelectorAll('#eds-table tbody tr');
-
-            rows.forEach(row => {
-                const name = row.cells[1].textContent.toLowerCase();
-                const location = row.cells[2].textContent.toLowerCase();
-                if (name.includes(searchQuery) || location.includes(searchQuery)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+        // Mostrar el modal
+        function openModal() {
+            document.getElementById("myModal").style.display = "block";
         }
 
-        // Agregar nueva EDS
+        // Cerrar el modal
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+        }
+
+        // Agregar nueva EDS (Función existente que se actualiza)
         function addEDS() {
             const name = document.getElementById('name').value;
             const location = document.getElementById('location').value;
@@ -124,6 +193,8 @@
             .then(data => {
                 // Limpiar el formulario
                 document.getElementById('eds-form').reset();
+                // Cerrar el modal
+                closeModal();
                 // Añadir la nueva EDS a la tabla
                 const tableBody = document.querySelector('#eds-table tbody');
                 const row = document.createElement('tr');
@@ -141,48 +212,10 @@
             .catch(error => console.error('Error:', error));
         }
 
-        // Editar EDS
-        function editEDS(id) {
-            const name = prompt('Nuevo nombre:');
-            const location = prompt('Nueva ubicación:');
-            const status = prompt('Nuevo estado (Pendiente/Completo):');
-
-            if (name && location && status) {
-                fetch(`/api/eds/${id}/`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: name,
-                        location: location,
-                        status: status
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Actualizar la fila correspondiente
-                    const row = document.querySelector(`#eds-table tbody tr[data-id="${id}"]`);
-                    row.cells[1].textContent = data.name;
-                    row.cells[2].textContent = data.location;
-                    row.cells[3].textContent = data.status;
-                })
-                .catch(error => console.error('Error:', error));
-            }
-        }
-
-        // Eliminar EDS
-        function deleteEDS(id) {
-            if (confirm('¿Seguro que deseas eliminar esta estación?')) {
-                fetch(`/api/eds/${id}/`, {
-                    method: 'DELETE',
-                })
-                .then(() => {
-                    // Eliminar la fila de la tabla
-                    const row = document.querySelector(`#eds-table tbody tr[data-id="${id}"]`);
-                    row.remove();
-                })
-                .catch(error => console.error('Error:', error));
+        // Cerrar el modal cuando se haga clic fuera del contenido
+        window.onclick = function(event) {
+            if (event.target == document.getElementById("myModal")) {
+                closeModal();
             }
         }
     </script>
