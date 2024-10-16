@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from django.shortcuts import render
 from .models import EDS, Checklist, Task
 from .serializers import EDSSerializer, ChecklistSerializer, TaskSerializer
 
@@ -13,3 +14,7 @@ class ChecklistViewSet(viewsets.ModelViewSet):
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+
+
+def eds_list(request):
+    return render(request, 'eds_list.html')

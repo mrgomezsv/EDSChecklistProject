@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from checklist_app.views import EDSViewSet, ChecklistViewSet, TaskViewSet
+from checklist_app.views import EDSViewSet, ChecklistViewSet, TaskViewSet, eds_list
 
 router = routers.DefaultRouter()
 router.register(r'eds', EDSViewSet)
@@ -27,5 +27,5 @@ router.register(r'tasks', TaskViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('eds-list/', eds_list, name='eds_list'),
 ]
-

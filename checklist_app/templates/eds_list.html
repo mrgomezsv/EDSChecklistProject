@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDS checkList Implementación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Estaciones de Servicio (EDS)</h1>
+    <table id="eds-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Ubicación</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí se mostrarán los datos -->
+        </tbody>
+    </table>
+
+    <script>
+        // Hacer una solicitud GET a la API para obtener las EDS
+        fetch('/api/eds/')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector('#eds-table tbody');
+                data.forEach(eds => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${eds.id}</td>
+                        <td>${eds.name}</td>
+                        <td>${eds.location}</td>
+                        <td>${eds.status}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>
