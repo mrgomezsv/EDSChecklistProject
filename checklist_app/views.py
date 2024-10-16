@@ -3,6 +3,7 @@ from django.shortcuts import render
 from .models import EDS, Checklist, Task
 from .serializers import EDSSerializer, ChecklistSerializer, TaskSerializer
 
+# API Views
 class EDSViewSet(viewsets.ModelViewSet):
     queryset = EDS.objects.all()
     serializer_class = EDSSerializer
@@ -15,6 +16,6 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
-
+# HTML View
 def eds_list(request):
     return render(request, 'eds_list.html')

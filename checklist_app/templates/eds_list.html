@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EDS checkList Implementación</title>
+    <title>EDS List</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,6 +26,11 @@
 </head>
 <body>
     <h1>Estaciones de Servicio (EDS)</h1>
+
+    <!-- Buscador -->
+    <input type="text" id="search-box" placeholder="Buscar por nombre o ubicación" onkeyup="filterEDS()">
+
+    <!-- Tabla de Estaciones de Servicio -->
     <table id="eds-table">
         <thead>
             <tr>
@@ -33,12 +38,32 @@
                 <th>Nombre</th>
                 <th>Ubicación</th>
                 <th>Estado</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
             </tr>
         </thead>
         <tbody>
             <!-- Aquí se mostrarán los datos -->
         </tbody>
     </table>
+
+    <!-- Formulario para Agregar Nueva EDS -->
+    <h2>Agregar Nueva Estación de Servicio</h2>
+    <form id="eds-form">
+        <label for="name">Nombre:</label><br>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="location">Ubicación:</label><br>
+        <input type="text" id="location" name="location" required><br><br>
+
+        <label for="status">Estado:</label><br>
+        <select id="status" name="status">
+            <option value="Pendiente">Pendiente</option>
+            <option value="Completo">Completo</option>
+        </select><br><br>
+
+        <button type="button" onclick="addEDS()">Agregar</button>
+    </form>
 
     <script>
         // Hacer una solicitud GET a la API para obtener las EDS
@@ -48,16 +73,118 @@
                 const tableBody = document.querySelector('#eds-table tbody');
                 data.forEach(eds => {
                     const row = document.createElement('tr');
+                    row.setAttribute('data-id', eds.id);
                     row.innerHTML = `
                         <td>${eds.id}</td>
                         <td>${eds.name}</td>
                         <td>${eds.location}</td>
                         <td>${eds.status}</td>
+                        <td><button onclick="editEDS(${eds.id})">Editar</button></td>
+                        <td><button onclick="deleteEDS(${eds.id})">Eliminar</button></td>
                     `;
                     tableBody.appendChild(row);
                 });
             })
             .catch(error => console.error('Error:', error));
+
+        // Filtrar EDS por nombre o ubicación
+        function filterEDS() {
+            const searchQuery = document.getElementById('search-box').value.toLowerCase();
+            const rows = document.querySelectorAll('#eds-table tbody tr');
+
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const location = row.cells[2].textContent.toLowerCase();
+                if (name.includes(searchQuery) || location.includes(searchQuery)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Agregar nueva EDS
+        function addEDS() {
+            const name = document.getElementById('name').value;
+            const location = document.getElementById('location').value;
+            const status = document.getElementById('status').value;
+
+            fetch('/api/eds/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    location: location,
+                    status: status
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Limpiar el formulario
+                document.getElementById('eds-form').reset();
+                // Añadir la nueva EDS a la tabla
+                const tableBody = document.querySelector('#eds-table tbody');
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', data.id);
+                row.innerHTML = `
+                    <td>${data.id}</td>
+                    <td>${data.name}</td>
+                    <td>${data.location}</td>
+                    <td>${data.status}</td>
+                    <td><button onclick="editEDS(${data.id})">Editar</button></td>
+                    <td><button onclick="deleteEDS(${data.id})">Eliminar</button></td>
+                `;
+                tableBody.appendChild(row);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Editar EDS
+        function editEDS(id) {
+            const name = prompt('Nuevo nombre:');
+            const location = prompt('Nueva ubicación:');
+            const status = prompt('Nuevo estado (Pendiente/Completo):');
+
+            if (name && location && status) {
+                fetch(`/api/eds/${id}/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        location: location,
+                        status: status
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Actualizar la fila correspondiente
+                    const row = document.querySelector(`#eds-table tbody tr[data-id="${id}"]`);
+                    row.cells[1].textContent = data.name;
+                    row.cells[2].textContent = data.location;
+                    row.cells[3].textContent = data.status;
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        // Eliminar EDS
+        function deleteEDS(id) {
+            if (confirm('¿Seguro que deseas eliminar esta estación?')) {
+                fetch(`/api/eds/${id}/`, {
+                    method: 'DELETE',
+                })
+                .then(() => {
+                    // Eliminar la fila de la tabla
+                    const row = document.querySelector(`#eds-table tbody tr[data-id="${id}"]`);
+                    row.remove();
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
     </script>
 </body>
 </html>
