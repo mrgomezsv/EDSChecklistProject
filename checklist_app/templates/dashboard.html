@@ -95,7 +95,13 @@
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <li><a class="dropdown-item" href="{% url 'password_change' %}">Cambiar Contraseña</a></li>
-            <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar Sesión</a></li>
+            <li>
+                <!-- Formulario para cerrar sesión con un token CSRF -->
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item">Cerrar Sesión</button>
+                </form>
+            </li>
         </ul>
     </div>
 </div>
