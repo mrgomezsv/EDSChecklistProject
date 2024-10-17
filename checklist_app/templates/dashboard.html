@@ -3,43 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <title>Dashboard</title>
     <style>
         body {
+            background-color: #F4F1FF;
             font-family: Arial, sans-serif;
         }
-        .container {
-            width: 80%;
-            margin: 0 auto;
-            padding-top: 50px;
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #343a40;
+            padding: 20px;
+            color: white;
         }
-        h1 {
-            color: #0078d4;
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
         }
-        .menu {
-            margin: 20px 0;
-            display: flex;
-            justify-content: space-around;
+        .sidebar ul li {
+            margin-bottom: 20px;
         }
-        .menu a {
-            padding: 10px 20px;
-            background-color: #0078d4;
+        .sidebar ul li a {
             color: white;
             text-decoration: none;
-            border-radius: 4px;
+            font-size: 18px;
         }
-        .menu a:hover {
-            background-color: #005a9e;
+        .sidebar ul li a:hover {
+            text-decoration: underline;
+        }
+        .content-container {
+            margin-left: 270px;
+            padding: 20px;
+        }
+        .content-container h1 {
+            font-size: 24px;
+        }
+        .user-profile {
+            position: absolute;
+            bottom: 20px;
+        }
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Bienvenido al Dashboard</h1>
-        <div class="menu">
-            <a href="{% url 'eds_list' %}">Gestión de EDS</a>
-            <a href="{% url 'task_list' %}">Gestión de Tareas</a>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+    <ul>
+        {% if user.is_authenticated %}
+            <li><strong>Sistema de Gestión</strong></li>
+            <li><a href="{% url 'eds_list' %}">Estaciones de Servicio</a></li>
+            <li><a href="{% url 'task_list' %}">Tareas</a></li>
+        {% endif %}
+    </ul>
+
+    <div class="user-profile">
+        <div class="profile-info">
+            <img src="{% static 'assets/user_profile.jpeg' %}" alt="Imagen de Perfil">
+            <span>{{ user.username }}</span>
         </div>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/logout">Cerrar Sesión</a></li>
+        </ul>
     </div>
+</nav>
+
+<!-- Main Content -->
+<div class="content-container">
+    {% block content %}
+    <h1>Bienvenido al Dashboard</h1>
+    <p>Selecciona una opción del menú para continuar.</p>
+    {% endblock %}
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <p>&copy; 2024 EDS Checklist Project. Todos los derechos reservados.</p>
+</footer>
+
 </body>
 </html>
