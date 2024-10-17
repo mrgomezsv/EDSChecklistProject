@@ -77,14 +77,17 @@
         {% endif %}
     </ul>
 
+    <!-- User Profile Dropdown -->
     <div class="user-profile">
-        <div class="profile-info">
-<!--            <img src="{% static 'assets/user_profile.jpeg' %}" alt="Imagen de Perfil">-->
-            <span>{{ user.username }}</span>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ user.username }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="{% url 'password_change' %}">Cambiar Contraseña</a></li>
+                <li><a class="dropdown-item" href="{% url 'logout' %}">Cerrar Sesión</a></li>
+            </ul>
         </div>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/logout">Cerrar Sesión</a></li>
-        </ul>
     </div>
 </nav>
 
@@ -94,11 +97,6 @@
     <h1>Bienvenido al Dashboard</h1>
     <p>Selecciona una opción del menú para continuar.</p>
     {% endblock %}
-</div>
-
-<div class="user-profile">
-    <a href="{% url 'password_change' %}">Cambiar Contraseña</a>
-    <a href="{% url 'logout' %}">Cerrar Sesión</a>
 </div>
 
 <!-- Footer -->
