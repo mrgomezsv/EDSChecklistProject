@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguimiento de Tareas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        /* Tabla de Tareas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #d1d1d1;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Estilo del botón para abrir el modal */
+        .btn-add {
+            background-color: #0078d4;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .btn-add:hover {
+            background-color: #005a9e;
+        }
+
+        /* Estilos del Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 30%;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0078d4;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover, .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Estilos del formulario */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="text"], input[type="time"], select, textarea {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #d1d1d1;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .btn-submit {
+            background-color: #0078d4;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .btn-submit:hover {
+            background-color: #005a9e;
+        }
+    </style>
+</head>
+<body>
+    <h1>Seguimiento de Tareas</h1>
+
+    <!-- Botón para abrir el modal -->
+    <button class="btn-add" onclick="openModal()">Agregar Nueva Tarea</button>
+
+    <!-- Tabla de Tareas -->
+    <table id="task-table">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Aspecto</th>
+                <th>Hora inicio</th>
+                <th>Hora real inicio</th>
+                <th>Duración programada</th>
+                <th>Duración real</th>
+                <th>Comentario</th>
+                <th>Observaciones Día 1</th>
+                <th>Observaciones Día 2</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí se mostrarán las tareas -->
+        </tbody>
+    </table>
+
+    <!-- Modal para agregar Tareas -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 class="modal-header">Agregar Nueva Tarea</h2>
+            <form id="task-form">
+                <label for="description">Aspecto:</label>
+                <input type="text" id="description" name="description" required>
+
+                <label for="start_time">Hora de Inicio Programada:</label>
+                <input type="time" id="start_time" name="start_time" required>
+
+                <label for="duration">Duración Programada (HH:MM:SS):</label>
+                <input type="text" id="duration" name="duration" required>
+
+                <button type="button" class="btn-submit" onclick="addTask()">Agregar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar el modal
+        function openModal() {
+            document.getElementById("myModal").style.display = "block";
+        }
+
+        // Cerrar el modal
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+        }
+
+        // Agregar nueva Tarea (Función existente que se actualiza)
+        function addTask() {
+            const description = document.getElementById('description').value;
+            const start_time = document.getElementById('start_time').value;
+            const duration = document.getElementById('duration').value;
+
+            fetch('/api/tasks/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    description: description,
+                    start_time: start_time,
+                    duration: duration
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Limpiar el formulario
+                document.getElementById('task-form').reset();
+                // Cerrar el modal
+                closeModal();
+                // Añadir la nueva tarea a la tabla
+                const tableBody = document.querySelector('#task-table tbody');
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', data.id);
+                row.innerHTML = `
+                    <td>${data.id}</td>
+                    <td>${data.description}</td>
+                    <td>${data.start_time}</td>
+                    <td></td>
+                    <td>${data.duration}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><button onclick="editTask(${data.id})">Editar</button></td>
+                    <td><button onclick="deleteTask(${data.id})">Eliminar</button></td>
+                `;
+                tableBody.appendChild(row);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Cerrar el modal cuando se haga clic fuera del contenido
+        window.onclick = function(event) {
+            if (event.target == document.getElementById("myModal")) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

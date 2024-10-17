@@ -37,10 +37,14 @@ class Checklist(models.Model):
 class Task(models.Model):
     checklist = models.ForeignKey(Checklist, on_delete=models.CASCADE, related_name='tasks')
     description = models.CharField(max_length=255)
-    start_time = models.TimeField()
-    duration = models.DurationField()
-    is_completed = models.BooleanField(default=False)
+    start_time = models.TimeField()  # Hora programada
+    real_start_time = models.TimeField(blank=True, null=True)  # Hora real de inicio
+    duration = models.DurationField()  # Duración programada
+    real_duration = models.DurationField(blank=True, null=True)  # Duración real
     comments = models.TextField(blank=True, null=True)
+    observations_day_1 = models.TextField(blank=True, null=True)  # Observaciones día 1
+    observations_day_2 = models.TextField(blank=True, null=True)  # Observaciones día 2
+    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.description

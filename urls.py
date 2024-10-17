@@ -17,15 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from checklist_app.views import EDSViewSet, ChecklistViewSet, TaskViewSet, eds_list
+from checklist_app.views import EDSViewSet, ChecklistViewSet, TaskViewSet, eds_list, task_list
 
 router = routers.DefaultRouter()
 router.register(r'eds', EDSViewSet)
 router.register(r'checklists', ChecklistViewSet)
-router.register(r'tasks', TaskViewSet)
+router.register(r'tasks', TaskViewSet)  # Agregar ruta de la API de tareas
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('eds-list/', eds_list, name='eds_list'),
+    path('task-list/', task_list, name='task_list'),  # Ruta para el template de tareas
 ]
