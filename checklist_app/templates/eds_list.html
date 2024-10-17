@@ -6,7 +6,7 @@
     <h1>Estaciones de Servicio (EDS)</h1>
 
     <!-- Botón para abrir el modal -->
-    <button class="btn btn-primary" onclick="openModal()">Agregar Nueva Estación de Servicio</button>
+    <button class="btn btn-primary mb-3" onclick="openModal()">Agregar Nueva Estación de Servicio</button>
 
     <!-- Tabla de Estaciones de Servicio -->
     <table class="table table-striped" id="eds-table">
@@ -27,8 +27,8 @@
                 <td>{{ estacion.nombre }}</td>
                 <td>{{ estacion.ubicacion }}</td>
                 <td>{{ estacion.estado }}</td>
-                <td><button onclick="editEDS({{ estacion.id }})">Editar</button></td>
-                <td><button onclick="deleteEDS({{ estacion.id }})">Eliminar</button></td>
+                <td><button class="btn btn-warning btn-sm" onclick="editEDS({{ estacion.id }})">Editar</button></td>
+                <td><button class="btn btn-danger btn-sm" onclick="deleteEDS({{ estacion.id }})">Eliminar</button></td>
             </tr>
             {% empty %}
             <tr>
@@ -39,37 +39,56 @@
     </table>
 
     <!-- Modal para agregar EDS -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 class="modal-header">Agregar Nueva Estación de Servicio</h2>
-            <form id="eds-form">
-                <label for="name">Nombre:</label>
-                <input type="text" id="name" name="name" required>
-
-                <label for="location">Ubicación:</label>
-                <input type="text" id="location" name="location" required>
-
-                <label for="status">Estado:</label>
-                <select id="status" name="status">
-                    <option value="Pendiente">Pendiente</option>
-                    <option value="Completo">Completo</option>
-                </select>
-
-                <button type="button" class="btn btn-success" onclick="addEDS()">Agregar</button>
-            </form>
+    <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agregar Nueva Estación de Servicio</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="eds-form">
+                        <div class="form-group mb-3">
+                            <label for="name">Nombre:</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="location">Ubicación:</label>
+                            <input type="text" class="form-control" id="location" name="location" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="status">Estado:</label>
+                            <select id="status" class="form-control" name="status">
+                                <option value="Pendiente">Pendiente</option>
+                                <option value="Completo">Completo</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-success" onclick="addEDS()">Agregar</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
+
+    <style>
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+    </style>
 
     <script>
         // Mostrar el modal
         function openModal() {
-            document.getElementById("myModal").style.display = "block";
-        }
-
-        // Cerrar el modal
-        function closeModal() {
-            document.getElementById("myModal").style.display = "none";
+            var myModal = new bootstrap.Modal(document.getElementById("myModal"));
+            myModal.show();
         }
 
         // Agregar nueva EDS
@@ -84,9 +103,9 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name: name,
-                    location: location,
-                    status: status
+                    nombre: name,
+                    ubicacion: location,
+                    estado: status
                 })
             })
             .then(response => response.json())
@@ -94,29 +113,22 @@
                 // Limpiar el formulario
                 document.getElementById('eds-form').reset();
                 // Cerrar el modal
-                closeModal();
+                var myModal = bootstrap.Modal.getInstance(document.getElementById("myModal"));
+                myModal.hide();
                 // Añadir la nueva EDS a la tabla
                 const tableBody = document.querySelector('#eds-table tbody');
                 const row = document.createElement('tr');
-                row.setAttribute('data-id', data.id);
                 row.innerHTML = `
                     <td>${data.id}</td>
-                    <td>${data.name}</td>
-                    <td>${data.location}</td>
-                    <td>${data.status}</td>
-                    <td><button onclick="editEDS(${data.id})">Editar</button></td>
-                    <td><button onclick="deleteEDS(${data.id})">Eliminar</button></td>
+                    <td>${data.nombre}</td>
+                    <td>${data.ubicacion}</td>
+                    <td>${data.estado}</td>
+                    <td><button class="btn btn-warning btn-sm" onclick="editEDS(${data.id})">Editar</button></td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteEDS(${data.id})">Eliminar</button></td>
                 `;
                 tableBody.appendChild(row);
             })
             .catch(error => console.error('Error:', error));
-        }
-
-        // Cerrar el modal cuando se haga clic fuera del contenido
-        window.onclick = function(event) {
-            if (event.target == document.getElementById("myModal")) {
-                closeModal();
-            }
         }
     </script>
 {% endblock %}
