@@ -16,17 +16,13 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
-# HTML View
+# HTML Views
 def eds_list(request):
     return render(request, 'eds_list.html')
 
-
-
-# Vista para la API de tareas
-class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.all()
-    serializer_class = TaskSerializer
-
-# Vista para el template HTML de tareas
 def task_list(request):
     return render(request, 'task_list.html')
+
+# Vista para el dashboard (si es que la necesitas)
+def dashboard(request):
+    return render(request, 'dashboard.html')

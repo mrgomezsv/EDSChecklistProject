@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding-top: 50px;
+        }
+        h1 {
+            color: #0078d4;
+        }
+        .menu {
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        .menu a {
+            padding: 10px 20px;
+            background-color: #0078d4;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .menu a:hover {
+            background-color: #005a9e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenido al Dashboard</h1>
+        <div class="menu">
+            <a href="{% url 'eds_list' %}">Gestión de EDS</a>
+            <a href="{% url 'task_list' %}">Gestión de Tareas</a>
+        </div>
+    </div>
+</body>
+</html>
