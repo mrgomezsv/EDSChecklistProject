@@ -1,128 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EDS List</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
+{% extends 'dashboard_base.html' %}
 
-        /* Tabla de EDS */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+{% block title %}Estaciones de Servicio{% endblock %}
 
-        table, th, td {
-            border: 1px solid #d1d1d1;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        /* Estilo del botón para abrir el modal */
-        .btn-add {
-            background-color: #0078d4;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-
-        .btn-add:hover {
-            background-color: #005a9e;
-        }
-
-        /* Estilos del Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 30%;
-            border-radius: 10px;
-            box-shadow: 0px 0px 15px rgba(0,0,0,0.3);
-        }
-
-        .modal-header {
-            font-size: 20px;
-            font-weight: bold;
-            color: #0078d4;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover, .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        /* Estilos del formulario */
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        input[type="text"], select {
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #d1d1d1;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        .btn-submit {
-            background-color: #0078d4;
-            color: white;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        .btn-submit:hover {
-            background-color: #005a9e;
-        }
-    </style>
-</head>
-<body>
+{% block content %}
     <h1>Estaciones de Servicio (EDS)</h1>
 
     <!-- Botón para abrir el modal -->
-    <button class="btn-add" onclick="openModal()">Agregar Nueva Estación de Servicio</button>
+    <button class="btn btn-primary" onclick="openModal()">Agregar Nueva Estación de Servicio</button>
 
     <!-- Tabla de Estaciones de Servicio -->
-    <table id="eds-table">
+    <table class="table table-striped" id="eds-table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -134,7 +21,20 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Aquí se mostrarán los datos -->
+            {% for estacion in estaciones %}
+            <tr>
+                <td>{{ estacion.id }}</td>
+                <td>{{ estacion.nombre }}</td>
+                <td>{{ estacion.ubicacion }}</td>
+                <td>{{ estacion.estado }}</td>
+                <td><button onclick="editEDS({{ estacion.id }})">Editar</button></td>
+                <td><button onclick="deleteEDS({{ estacion.id }})">Eliminar</button></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No hay estaciones de servicio registradas</td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
 
@@ -156,7 +56,7 @@
                     <option value="Completo">Completo</option>
                 </select>
 
-                <button type="button" class="btn-submit" onclick="addEDS()">Agregar</button>
+                <button type="button" class="btn btn-success" onclick="addEDS()">Agregar</button>
             </form>
         </div>
     </div>
@@ -172,7 +72,7 @@
             document.getElementById("myModal").style.display = "none";
         }
 
-        // Agregar nueva EDS (Función existente que se actualiza)
+        // Agregar nueva EDS
         function addEDS() {
             const name = document.getElementById('name').value;
             const location = document.getElementById('location').value;
@@ -219,5 +119,4 @@
             }
         }
     </script>
-</body>
-</html>
+{% endblock %}

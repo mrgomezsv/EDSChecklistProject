@@ -10,6 +10,7 @@ from django.shortcuts import render, redirect
 from checklist_app.forms import CustomUserCreationForm  # Importar el formulario personalizado
 from django.contrib.auth import login
 from django.contrib import messages
+from .models import EDS
 
 # Vista para el dashboard (requiere login)
 @login_required
@@ -51,3 +52,7 @@ def register(request):
         form = CustomUserCreationForm()
 
     return render(request, 'registration/register.html', {'form': form})
+
+def eds_list(request):
+    estaciones = EDS.objects.all()  # Asegúrate de que el nombre del modelo es correcto
+    return render(request, 'eds_list.html', {'estaciones': estaciones})
