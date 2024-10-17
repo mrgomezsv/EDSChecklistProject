@@ -94,17 +94,17 @@
             {{ user.username }}
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li><a class="dropdown-item" href="{% url 'password_change' %}">Cambiar Contraseña</a></li>
             <li>
-                <!-- Formulario para cerrar sesión con un token CSRF -->
-                <form method="post" action="{% url 'logout' %}">
+                <form id="logout-form" action="{% url 'logout' %}" method="POST" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="dropdown-item">Cerrar Sesión</button>
                 </form>
             </li>
+            <li><a class="dropdown-item" href="{% url 'password_change' %}">Cambiar Contraseña</a></li>
         </ul>
     </div>
 </div>
+
 
 </body>
 </html>
