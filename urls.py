@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views  # Importa las vistas de autenticación
 from rest_framework import routers
 from checklist_app.views import EDSViewSet, ChecklistViewSet, TaskViewSet, eds_list, task_list, dashboard
 
@@ -27,6 +28,8 @@ router.register(r'tasks', TaskViewSet)
 urlpatterns = [
     path('', dashboard, name='dashboard'),
     path('admin/', admin.site.urls),
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('api/', include(router.urls)),
     path('eds-list/', eds_list, name='eds_list'),
     path('task-list/', task_list, name='task_list'),
