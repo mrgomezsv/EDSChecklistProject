@@ -44,9 +44,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Agregar Nueva Estación de Servicio</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" aria-label="Close" onclick="closeModal()"></button>
                 </div>
                 <div class="modal-body">
                     <form id="eds-form">
@@ -66,6 +64,7 @@
                                 <option value="Completo">Completo</option>
                             </select>
                         </div>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cerrar</button>
                         <button type="button" class="btn btn-success" onclick="addEDS()">Agregar</button>
                     </form>
                 </div>

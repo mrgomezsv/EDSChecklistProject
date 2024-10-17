@@ -4,7 +4,7 @@
     <h1>Seguimiento de Tareas</h1>
 
     <!-- Botón para abrir el modal -->
-    <button class="btn btn-primary" onclick="openModal()">Agregar Nueva Tarea</button>
+    <button class="btn btn-primary mb-3" onclick="openModal()">Agregar Nueva Tarea</button>
 
     <!-- Tabla de Tareas -->
     <table class="table table-striped" id="task-table">
@@ -29,26 +29,101 @@
     </table>
 
     <!-- Modal para agregar Tareas -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 class="modal-header">Agregar Nueva Tarea</h2>
-            <form id="task-form">
-                <label for="description">Aspecto:</label>
-                <input type="text" id="description" name="description" required>
-
-                <label for="start_time">Hora de Inicio Programada:</label>
-                <input type="time" id="start_time" name="start_time" required>
-
-                <label for="duration">Duración Programada (HH:MM:SS):</label>
-                <input type="text" id="duration" name="duration" required>
-
-                <button type="button" class="btn btn-success" onclick="addTask()">Agregar</button>
-            </form>
+    <div id="myModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Agregar Nueva Tarea</h5>
+                    <button type="button" class="btn-close" aria-label="Close" onclick="closeModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="task-form">
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Aspecto:</label>
+                            <input type="text" class="form-control" id="description" name="description" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="start_time" class="form-label">Hora de Inicio Programada:</label>
+                            <input type="time" class="form-control" id="start_time" name="start_time" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="duration" class="form-label">Duración Programada (HH:MM:SS):</label>
+                            <input type="text" class="form-control" id="duration" name="duration" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cerrar</button>
+                    <button type="button" class="btn btn-success" onclick="addTask()">Agregar</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Lógica para manejar el modal y agregar tareas...
+        // Función para mostrar el modal
+        function openModal() {
+            var myModal = new bootstrap.Modal(document.getElementById('myModal'));
+            myModal.show();
+        }
+
+        // Función para cerrar el modal
+        function closeModal() {
+            var myModalEl = document.getElementById('myModal');
+            var modal = bootstrap.Modal.getInstance(myModalEl);
+            modal.hide();
+        }
+
+        // Función para agregar una nueva tarea
+        function addTask() {
+            const description = document.getElementById('description').value;
+            const start_time = document.getElementById('start_time').value;
+            const duration = document.getElementById('duration').value;
+
+            fetch('/api/tasks/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    description: description,
+                    start_time: start_time,
+                    duration: duration
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Limpiar el formulario
+                document.getElementById('task-form').reset();
+                // Cerrar el modal
+                closeModal();
+                // Añadir la nueva tarea a la tabla
+                const tableBody = document.querySelector('#task-table tbody');
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', data.id);
+                row.innerHTML = `
+                    <td>${data.id}</td>
+                    <td>${data.description}</td>
+                    <td>${data.start_time}</td>
+                    <td></td>
+                    <td>${data.duration}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><button class="btn btn-warning btn-sm" onclick="editTask(${data.id})">Editar</button></td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteTask(${data.id})">Eliminar</button></td>
+                `;
+                tableBody.appendChild(row);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Cerrar el modal cuando se haga clic fuera del contenido
+        window.onclick = function(event) {
+            if (event.target == document.getElementById("myModal")) {
+                closeModal();
+            }
+        }
     </script>
 {% endblock %}
