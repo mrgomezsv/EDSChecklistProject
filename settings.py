@@ -86,6 +86,20 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+
+# Add STATICFILES_DIRS for additional static files locations
+STATICFILES_DIRS = [
+    BASE_DIR / "staticfiles",  # Asegúrate de que esta ruta sea correcta
+]
+
+# For production, collect static files into STATIC_ROOT
+STATIC_ROOT = BASE_DIR / "static"
+
+# Media files (if you're managing user uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
