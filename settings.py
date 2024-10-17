@@ -72,9 +72,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wsgi.application'
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/login/'
-LOGIN_URL = '/login/'
+LOGIN_URL = '/login/'  # Corregido
+LOGIN_REDIRECT_URL = 'dashboard'  # Redirige al dashboard después del login
+LOGOUT_REDIRECT_URL = 'login'  # Redirige al login después del logout
 
 
 # Database

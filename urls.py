@@ -18,8 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views  # Importa las vistas de autenticación
 from rest_framework import routers
-from checklist_app.views import EDSViewSet, ChecklistViewSet, TaskViewSet, eds_list, task_list, dashboard
 
+from checklist_app import views
+from checklist_app.views import EDSViewSet, ChecklistViewSet, TaskViewSet, eds_list, task_list, dashboard, register
+
+# Definir el router y registrar las vistas de las API
 router = routers.DefaultRouter()
 router.register(r'eds', EDSViewSet)
 router.register(r'checklists', ChecklistViewSet)
@@ -28,10 +31,14 @@ router.register(r'tasks', TaskViewSet)
 urlpatterns = [
     path('', dashboard, name='dashboard'),
     path('admin/', admin.site.urls),
+    path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('api/', include(router.urls)),
+    path('password_change/', auth_views.PasswordChangeView.as_view(template_name='registration/password_change.html'),
+         name='password_change'),
+    path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='registration/password_change_done.html'),
+         name='password_change_done'),
+    path('api/', include(router.urls)),  # Incluir las rutas del router de API
     path('eds-list/', eds_list, name='eds_list'),
     path('task-list/', task_list, name='task_list'),
 ]
-
