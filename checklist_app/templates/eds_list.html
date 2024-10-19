@@ -24,9 +24,9 @@
             {% for estacion in estaciones %}
             <tr>
                 <td>{{ estacion.id }}</td>
-                <td>{{ estacion.nombre }}</td>
-                <td>{{ estacion.ubicacion }}</td>
-                <td>{{ estacion.estado }}</td>
+                <td>{{ estacion.name }}</td>  <!-- Corregido: name -->
+                <td>{{ estacion.location }}</td>  <!-- Corregido: location -->
+                <td>{{ estacion.status }}</td>  <!-- Corregido: status -->
                 <td><button class="btn btn-warning btn-sm" onclick="editEDS({{ estacion.id }})">Editar</button></td>
                 <td><button class="btn btn-danger btn-sm" onclick="deleteEDS({{ estacion.id }})">Eliminar</button></td>
             </tr>
@@ -103,9 +103,9 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    nombre: name,
-                    ubicacion: location,
-                    estado: status
+                    name: name,  // Corregido: name
+                    location: location,  // Corregido: location
+                    status: status  // Corregido: status
                 })
             })
             .then(response => response.json())
@@ -120,9 +120,9 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${data.id}</td>
-                    <td>${data.nombre}</td>
-                    <td>${data.ubicacion}</td>
-                    <td>${data.estado}</td>
+                    <td>${data.name}</td>  <!-- Corregido: name -->
+                    <td>${data.location}</td>  <!-- Corregido: location -->
+                    <td>${data.status}</td>  <!-- Corregido: status -->
                     <td><button class="btn btn-warning btn-sm" onclick="editEDS(${data.id})">Editar</button></td>
                     <td><button class="btn btn-danger btn-sm" onclick="deleteEDS(${data.id})">Eliminar</button></td>
                 `;

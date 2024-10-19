@@ -53,6 +53,7 @@ def register(request):
 
     return render(request, 'registration/register.html', {'form': form})
 
+@login_required
 def eds_list(request):
-    estaciones = EDS.objects.all()  # Asegúrate de que el nombre del modelo es correcto
+    estaciones = EDS.objects.all()  # Obtén todas las estaciones del modelo EDS
     return render(request, 'eds_list.html', {'estaciones': estaciones})

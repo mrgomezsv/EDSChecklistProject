@@ -15,9 +15,9 @@ class User(AbstractUser):
 
 
 class EDS(models.Model):
-    name = models.CharField(max_length=100)
-    location = models.CharField(max_length=255)
-    status = models.CharField(max_length=50, default='Pendiente')
+    name = models.CharField(max_length=100)  # Nombre de la estación
+    location = models.CharField(max_length=255)  # Ubicación de la estación
+    status = models.CharField(max_length=50, default='Pendiente')  # Estado de la estación
 
     def __str__(self):
         return self.name
