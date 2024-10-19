@@ -86,16 +86,12 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-
-# Add STATICFILES_DIRS for additional static files locations
 STATICFILES_DIRS = [
-    BASE_DIR / "staticfiles",  # Asegúrate de que esta ruta sea correcta
+    BASE_DIR / 'staticfiles',
 ]
+STATIC_ROOT = BASE_DIR / 'static'
 
-# For production, collect static files into STATIC_ROOT
-STATIC_ROOT = BASE_DIR / "static"
 
 # Media files (if you're managing user uploads)
 MEDIA_URL = '/media/'
