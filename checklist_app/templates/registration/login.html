@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,9 +39,22 @@
             display: block;
             margin-top: 10px;
         }
+        .brand-image {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .brand-image img {
+            width: 100px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
+
+<!-- Imagen de la marca -->
+<div class="brand-image">
+    <img src="{% static 'assets/logo.png' %}" alt="Marca">
+</div>
 
 <div class="login-container">
     <h2>Iniciar Sesión</h2>
