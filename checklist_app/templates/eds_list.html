@@ -22,7 +22,7 @@
     </thead>
     <tbody>
         {% for estacion in estaciones %}
-        <tr>
+        <tr data-id="{{ estacion.id }}">
             <td>{{ estacion.id }}</td>
             <td>{{ estacion.name }}</td>
             <td>{{ estacion.location }}</td>
@@ -123,6 +123,7 @@
         .then(data => {
             const tableBody = document.querySelector('#eds-table tbody');
             const row = document.createElement('tr');
+            row.setAttribute('data-id', data.id);
             row.innerHTML = `
                 <td>${data.id}</td>
                 <td>${data.name}</td>
@@ -178,7 +179,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            const row = document.querySelector(`#eds-table tr td:first-child:contains(${id})`).parentElement;
+            const row = document.querySelector(`#eds-table tr[data-id="${id}"]`);
             row.children[1].textContent = data.name;
             row.children[2].textContent = data.location;
             row.children[3].textContent = data.status;
@@ -199,8 +200,19 @@
             })
             .then(response => {
                 if (response.status === 204) {
-                    const row = document.querySelector(`#eds-table tr td:first-child:contains(${id})`).parentElement;
-                    row.remove();
+                    // Eliminar la fila del DOM
+                    const row = document.querySelector(`#eds-table tr[data-id="${id}"]`);
+                    if (row) {
+                        row.remove();
+                    }
+
+                    // Comprobar si la tabla está vacía y mostrar mensaje si es necesario
+                    const tableBody = document.querySelector('#eds-table tbody');
+                    if (tableBody.children.length === 0) {
+                        const emptyRow = document.createElement('tr');
+                        emptyRow.innerHTML = '<td colspan="6">No hay estaciones de servicio registradas</td>';
+                        tableBody.appendChild(emptyRow);
+                    }
                 }
             })
             .catch(error => console.error('Error:', error));
