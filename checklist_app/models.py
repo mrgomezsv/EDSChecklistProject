@@ -13,11 +13,10 @@ class User(AbstractUser):
         return self.username
 
 
-
 class EDS(models.Model):
-    name = models.CharField(max_length=100)  # Nombre de la estación
-    location = models.CharField(max_length=255)  # Ubicación de la estación
-    status = models.CharField(max_length=50, default='Pendiente')  # Estado de la estación
+    name = models.CharField(max_length=100)
+    location = models.CharField(max_length=255)
+    status = models.CharField(max_length=50, default='Pendiente')
 
     def __str__(self):
         return self.name
@@ -37,13 +36,13 @@ class Checklist(models.Model):
 class Task(models.Model):
     checklist = models.ForeignKey(Checklist, on_delete=models.CASCADE, related_name='tasks')
     description = models.CharField(max_length=255)
-    start_time = models.TimeField()  # Hora programada
-    real_start_time = models.TimeField(blank=True, null=True)  # Hora real de inicio
-    duration = models.DurationField()  # Duración programada
-    real_duration = models.DurationField(blank=True, null=True)  # Duración real
+    start_time = models.TimeField()
+    real_start_time = models.TimeField(blank=True, null=True)
+    duration = models.DurationField()
+    real_duration = models.DurationField(blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
-    observations_day_1 = models.TextField(blank=True, null=True)  # Observaciones día 1
-    observations_day_2 = models.TextField(blank=True, null=True)  # Observaciones día 2
+    observations_day_1 = models.TextField(blank=True, null=True)
+    observations_day_2 = models.TextField(blank=True, null=True)
     is_completed = models.BooleanField(default=False)
 
     def __str__(self):

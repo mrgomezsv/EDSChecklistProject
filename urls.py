@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views  # Importa las vistas de autenticación
 from rest_framework import routers
-
+from django.conf.urls.static import static
+import settings
 from checklist_app import views
 from checklist_app.views import EDSViewSet, ChecklistViewSet, TaskViewSet, eds_list, task_list, dashboard, register
 
@@ -42,3 +43,6 @@ urlpatterns = [
     path('eds-list/', eds_list, name='eds_list'),
     path('task-list/', task_list, name='task_list'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])

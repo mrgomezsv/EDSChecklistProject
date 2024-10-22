@@ -3,132 +3,208 @@
 {% block title %}Estaciones de Servicio{% endblock %}
 
 {% block content %}
-    <h1>Estaciones de Servicio (EDS)</h1>
+<h1>Estaciones de Servicio (EDS)</h1>
 
-    <!-- Botón para abrir el modal -->
-    <button class="btn btn-primary mb-3" onclick="openModal()">Agregar Nueva Estación de Servicio</button>
+<!-- Botón para abrir el modal -->
+<button class="btn btn-primary mb-3" onclick="openModal()">Agregar Nueva Estación de Servicio</button>
 
-    <!-- Tabla de Estaciones de Servicio -->
-    <table class="table table-striped" id="eds-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Ubicación</th>
-                <th>Estado</th>
-                <th>Editar</th>
-                <th>Eliminar</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for estacion in estaciones %}
-            <tr>
-                <td>{{ estacion.id }}</td>
-                <td>{{ estacion.name }}</td>  <!-- Corregido: name -->
-                <td>{{ estacion.location }}</td>  <!-- Corregido: location -->
-                <td>{{ estacion.status }}</td>  <!-- Corregido: status -->
-                <td><button class="btn btn-warning btn-sm" onclick="editEDS({{ estacion.id }})">Editar</button></td>
-                <td><button class="btn btn-danger btn-sm" onclick="deleteEDS({{ estacion.id }})">Eliminar</button></td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6">No hay estaciones de servicio registradas</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<!-- Tabla de Estaciones de Servicio -->
+<table class="table table-striped" id="eds-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Ubicación</th>
+            <th>Estado</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for estacion in estaciones %}
+        <tr>
+            <td>{{ estacion.id }}</td>
+            <td>{{ estacion.name }}</td>
+            <td>{{ estacion.location }}</td>
+            <td>{{ estacion.status }}</td>
+            <td><button class="btn btn-warning btn-sm" onclick="editEDS({{ estacion.id }})">Editar</button></td>
+            <td><button class="btn btn-danger btn-sm" onclick="deleteEDS({{ estacion.id }})">Eliminar</button></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No hay estaciones de servicio registradas</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-    <!-- Modal para agregar EDS -->
-    <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Agregar Nueva Estación de Servicio</h5>
-                    <button type="button" class="btn-close" aria-label="Close" onclick="closeModal()"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="eds-form">
-                        <div class="form-group mb-3">
-                            <label for="name">Nombre:</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="location">Ubicación:</label>
-                            <input type="text" class="form-control" id="location" name="location" required>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="status">Estado:</label>
-                            <select id="status" class="form-control" name="status">
-                                <option value="Pendiente">Pendiente</option>
-                                <option value="En Proceso">En Proceso</option>
-                                <option value="Completo">Completo</option>
-                            </select>
-                        </div>
-                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cerrar</button>
-                        <button type="button" class="btn btn-success" onclick="addEDS()">Agregar</button>
-                    </form>
-                </div>
+<!-- Modal para agregar y editar EDS -->
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Nueva Estación de Servicio</h5>
+                <button type="button" class="btn-close" aria-label="Close" onclick="closeModal()"></button>
+            </div>
+            <div class="modal-body">
+                <form id="eds-form">
+                    <div class="form-group mb-3">
+                        <label for="name">Nombre:</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="location">Ubicación:</label>
+                        <input type="text" class="form-control" id="location" name="location" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="status">Estado:</label>
+                        <select id="status" class="form-control" name="status">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="En Proceso">En Proceso</option>
+                            <option value="Completo">Completo</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cerrar</button>
+                    <button type="button" class="btn btn-success" id="save-button" onclick="addEDS()">Agregar</button>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <style>
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+<script>
+    // Obtener el token CSRF
+    function getCSRFToken() {
+        let cookieValue = null;
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, 10) === 'csrftoken=') {
+                cookieValue = decodeURIComponent(cookie.substring(10));
+                break;
+            }
         }
+        return cookieValue;
+    }
 
-        .modal-body {
-            padding: 20px;
-        }
-    </style>
+    // Mostrar el modal
+    function openModal() {
+        document.getElementById('eds-form').reset();
+        document.getElementById('save-button').textContent = 'Agregar';
+        document.getElementById('save-button').setAttribute('onclick', 'addEDS()');
+        var myModal = new bootstrap.Modal(document.getElementById("myModal"));
+        myModal.show();
+    }
 
-    <script>
-        // Mostrar el modal
-        function openModal() {
-            var myModal = new bootstrap.Modal(document.getElementById("myModal"));
-            myModal.show();
-        }
+    function closeModal() {
+        var myModal = bootstrap.Modal.getInstance(document.getElementById("myModal"));
+        myModal.hide();
+    }
 
-        // Agregar nueva EDS
-        function addEDS() {
-            const name = document.getElementById('name').value;
-            const location = document.getElementById('location').value;
-            const status = document.getElementById('status').value;
+    // Agregar nueva EDS
+    function addEDS() {
+        const name = document.getElementById('name').value;
+        const location = document.getElementById('location').value;
+        const status = document.getElementById('status').value;
 
-            fetch('/api/eds/', {
-                method: 'POST',
+        fetch('/api/eds/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()  // Agregar token CSRF para seguridad
+            },
+            body: JSON.stringify({
+                name: name,
+                location: location,
+                status: status
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.querySelector('#eds-table tbody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${data.id}</td>
+                <td>${data.name}</td>
+                <td>${data.location}</td>
+                <td>${data.status}</td>
+                <td><button class="btn btn-warning btn-sm" onclick="editEDS(${data.id})">Editar</button></td>
+                <td><button class="btn btn-danger btn-sm" onclick="deleteEDS(${data.id})">Eliminar</button></td>
+            `;
+            tableBody.appendChild(row);
+            closeModal();
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Editar EDS
+    function editEDS(id) {
+        fetch(`/api/eds/${id}/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()  // Token CSRF requerido
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('name').value = data.name;
+            document.getElementById('location').value = data.location;
+            document.getElementById('status').value = data.status;
+            document.getElementById('save-button').textContent = 'Guardar Cambios';
+            document.getElementById('save-button').setAttribute('onclick', `updateEDS(${id})`);
+            openModal();
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Actualizar EDS
+    function updateEDS(id) {
+        const name = document.getElementById('name').value;
+        const location = document.getElementById('location').value;
+        const status = document.getElementById('status').value;
+
+        fetch(`/api/eds/${id}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()  // Token CSRF requerido
+            },
+            body: JSON.stringify({
+                name: name,
+                location: location,
+                status: status
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const row = document.querySelector(`#eds-table tr td:first-child:contains(${id})`).parentElement;
+            row.children[1].textContent = data.name;
+            row.children[2].textContent = data.location;
+            row.children[3].textContent = data.status;
+            closeModal();
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Eliminar EDS
+    function deleteEDS(id) {
+        if (confirm("¿Estás seguro de que deseas eliminar esta estación?")) {
+            fetch(`/api/eds/${id}/`, {
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: name,  // Corregido: name
-                    location: location,  // Corregido: location
-                    status: status  // Corregido: status
-                })
+                    'X-CSRFToken': getCSRFToken()  // Agregar token CSRF a la solicitud DELETE
+                }
             })
-            .then(response => response.json())
-            .then(data => {
-                // Limpiar el formulario
-                document.getElementById('eds-form').reset();
-                // Cerrar el modal
-                var myModal = bootstrap.Modal.getInstance(document.getElementById("myModal"));
-                myModal.hide();
-                // Añadir la nueva EDS a la tabla
-                const tableBody = document.querySelector('#eds-table tbody');
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${data.id}</td>
-                    <td>${data.name}</td>  <!-- Corregido: name -->
-                    <td>${data.location}</td>  <!-- Corregido: location -->
-                    <td>${data.status}</td>  <!-- Corregido: status -->
-                    <td><button class="btn btn-warning btn-sm" onclick="editEDS(${data.id})">Editar</button></td>
-                    <td><button class="btn btn-danger btn-sm" onclick="deleteEDS(${data.id})">Eliminar</button></td>
-                `;
-                tableBody.appendChild(row);
+            .then(response => {
+                if (response.status === 204) {
+                    const row = document.querySelector(`#eds-table tr td:first-child:contains(${id})`).parentElement;
+                    row.remove();
+                }
             })
             .catch(error => console.error('Error:', error));
         }
-    </script>
+    }
+</script>
 {% endblock %}

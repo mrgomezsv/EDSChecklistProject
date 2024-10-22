@@ -1,5 +1,4 @@
 {% load static %}
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -51,12 +50,11 @@
 </head>
 <body>
 
-<!-- Imagen de la marca -->
-<div class="brand-image">
-    <img src="{% static 'assets/logo.png' %}" alt="Marca">
-</div>
-
 <div class="login-container">
+    <!-- Imagen de la marca -->
+<div class="brand-image">
+    <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fsmartapps.gt%2Fodoo%2F&psig=AOvVaw1ERIItNJTJen6axedKxsmF&ust=1729441691822000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCJCd28DumokDFQAAAAAdAAAAABAE" alt="Marca">
+</div>
     <h2>Iniciar Sesión</h2>
     <form method="post">
         {% csrf_token %}
