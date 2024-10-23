@@ -16,6 +16,8 @@
             <th>Nombre</th>
             <th>Ubicación</th>
             <th>Estado</th>
+            <th>Operador</th>
+            <th>Supervisor Uno</th>
             <th>Editar</th>
             <th>Eliminar</th>
         </tr>
@@ -27,12 +29,14 @@
             <td>{{ estacion.name }}</td>
             <td>{{ estacion.location }}</td>
             <td>{{ estacion.status }}</td>
+            <td>{{ estacion.operator }}</td>
+            <td>{{ estacion.supervisor_uno }}</td>
             <td><button class="btn btn-warning btn-sm" onclick="editEDS({{ estacion.id }})">Editar</button></td>
             <td><button class="btn btn-danger btn-sm" onclick="deleteEDS({{ estacion.id }})">Eliminar</button></td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="6">No hay estaciones de servicio registradas</td>
+            <td colspan="8">No hay estaciones de servicio registradas</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -63,6 +67,14 @@
                             <option value="En Proceso">En Proceso</option>
                             <option value="Completo">Completo</option>
                         </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="operator">Operador:</label>
+                        <input type="text" class="form-control" id="operator" name="operator" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="supervisor_uno">Supervisor Uno:</label>
+                        <input type="text" class="form-control" id="supervisor_uno" name="supervisor_uno" required>
                     </div>
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">Cerrar</button>
                     <button type="button" class="btn btn-success" id="save-button" onclick="addEDS()">Agregar</button>
@@ -106,6 +118,8 @@
         const name = document.getElementById('name').value;
         const location = document.getElementById('location').value;
         const status = document.getElementById('status').value;
+        const operator = document.getElementById('operator').value;
+        const supervisor_uno = document.getElementById('supervisor_uno').value;
 
         fetch('/api/eds/', {
             method: 'POST',
@@ -116,7 +130,9 @@
             body: JSON.stringify({
                 name: name,
                 location: location,
-                status: status
+                status: status,
+                operator: operator,
+                supervisor_uno: supervisor_uno
             })
         })
         .then(response => response.json())
@@ -129,6 +145,8 @@
                 <td>${data.name}</td>
                 <td>${data.location}</td>
                 <td>${data.status}</td>
+                <td>${data.operator}</td>
+                <td>${data.supervisor_uno}</td>
                 <td><button class="btn btn-warning btn-sm" onclick="editEDS(${data.id})">Editar</button></td>
                 <td><button class="btn btn-danger btn-sm" onclick="deleteEDS(${data.id})">Eliminar</button></td>
             `;
@@ -152,6 +170,8 @@
             document.getElementById('name').value = data.name;
             document.getElementById('location').value = data.location;
             document.getElementById('status').value = data.status;
+            document.getElementById('operator').value = data.operator;
+            document.getElementById('supervisor_uno').value = data.supervisor_uno;
             document.getElementById('save-button').textContent = 'Guardar Cambios';
             document.getElementById('save-button').setAttribute('onclick', `updateEDS(${id})`);
             openModal();
@@ -164,6 +184,8 @@
         const name = document.getElementById('name').value;
         const location = document.getElementById('location').value;
         const status = document.getElementById('status').value;
+        const operator = document.getElementById('operator').value;
+        const supervisor_uno = document.getElementById('supervisor_uno').value;
 
         fetch(`/api/eds/${id}/`, {
             method: 'PUT',
@@ -174,7 +196,9 @@
             body: JSON.stringify({
                 name: name,
                 location: location,
-                status: status
+                status: status,
+                operator: operator,
+                supervisor_uno: supervisor_uno
             })
         })
         .then(response => response.json())
@@ -183,6 +207,8 @@
             row.children[1].textContent = data.name;
             row.children[2].textContent = data.location;
             row.children[3].textContent = data.status;
+            row.children[4].textContent = data.operator;
+            row.children[5].textContent = data.supervisor_uno;
             closeModal();
         })
         .catch(error => console.error('Error:', error));
@@ -210,7 +236,7 @@
                     const tableBody = document.querySelector('#eds-table tbody');
                     if (tableBody.children.length === 0) {
                         const emptyRow = document.createElement('tr');
-                        emptyRow.innerHTML = '<td colspan="6">No hay estaciones de servicio registradas</td>';
+                        emptyRow.innerHTML = '<td colspan="8">No hay estaciones de servicio registradas</td>';
                         tableBody.appendChild(emptyRow);
                     }
                 }

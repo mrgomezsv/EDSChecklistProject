@@ -17,6 +17,8 @@ class EDS(models.Model):
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=255)
     status = models.CharField(max_length=50, default='Pendiente')
+    operator = models.CharField(max_length=100)
+    supervisor_uno = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
